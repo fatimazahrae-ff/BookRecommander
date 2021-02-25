@@ -1,0 +1,169 @@
+{% extends "header.html" %} {% block content %}
+<div class="container" id="commandes">
+    <h2>ORDER</h2>
+
+
+
+    <form id="newCommandeForm">
+        <label for="date_cmnd">Order Date</label>
+        <input type="text" name="date_cmnd" id="date_cmnd">
+
+        <label for="commande">book</label>
+        <input type="text" name="book" id="book">
+
+        <label for="userID">user</label>
+        <input type="text " name="userID " id="userID">
+        <button class="favorite styled" type="button" value="Add " id="add ">Add</button>
+        <div id="newCommandeForm"></div>
+    </form>
+
+
+
+    {% for commande in commandes %}
+    <div class="container " id="{{ commande.id }}commandeContainer ">
+        <span id="{{commande.id}}span ">{{commande.ID}}</span>
+        <form id="commandeUpdateForm " name="{{commande.id}} ">
+            <label>commande date</label>
+            <input type="text " value="{{commande.date_cmnd}} " name="date_cmnd " id="{{commande.id}}date_cmnd ">
+
+            <label>book</label>
+            <input type="text " value="{{commande.book}} " name="book" id="{{commande.book}}book">
+
+            <label>User</label>
+            <input type="text " value="{{commande.userID}} " name="userID " id="{{commande.userID}}userID ">
+
+            <button type="submit " class="favorite styled" value="Update " id="update ">Update</button>
+            <button class="btn btn-primary btn-mine " value="{{commande.id}} " id="delete ">Delete</button>
+            <div id="{{commande.id}}error "></div>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+<script type="text/javascript ">
+    $(document).ready(function() {
+        $(document).on('submit', "#commandeUpdateForm ", function(event) {
+            event.preventDefault()
+            id = $(this).attr("name ")
+            if (validatecommande(id)) {
+                updatecommande(id)
+            } else {
+                document.getElementById(id.toString() + "error ").innerHTML = "Please enter a commandename and password "
+            }
+        })
+
+        $(document).on('click', "#delete ", function(event) {
+            event.preventDefault()
+            deletecommande($(this).attr("value "))
+            contID = "# " + ($(this).attr("value ")).toString() + "commandeContainer "
+            $(contID).remove();
+        })
+    })
+
+
+
+    function deletecommande(id) {
+        var commande = new Object()
+        commande.id = id
+
+        $.ajax({
+            url: "/commandeDelete ",
+            method: "POST ",
+            dataType: "json ",
+            data: JSON.stringify(commande),
+            contentType: 'application/json;charset=UTF-8',
+        })
+        event.preventDefault();
+    }
+
+    function updatecommande(id) {
+        var commande = new Object()
+        commande.id = document.getElementById(id + "id ").value;
+        commande.date_cmnd = document.getElementById(date_cmnd + "date_cmnd ").value;
+        $.ajax({
+            url: "/commandeUpdate ",
+            method: "POST ",
+            dataType: "json ",
+            data: JSON.stringify(commande),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(response) {
+                if (response == "true ") {
+                    document.getElementById(id.toString() + "error ").innerHTML = " "
+                    document.getElementById(id + "span ").innerHTML = commande.commandename
+                } else {
+                    document.getElementById(id + "error ").innerHTML = "There is already a commande with that commandename "
+                }
+            }
+        })
+        event.preventDefault()
+    }
+
+    function addCommande() {
+        var commande = new Object()
+        commande.date_cmnd = document.getElementById("date_cmnd").value;
+        commande.book = document.getElementById("book").value;
+        commande.userID = document.getElementById("userID").value;
+
+
+        $.ajax({
+            url: "/addCommande",
+            method: "POST",
+            dataType: "json",
+            data: JSON.stringify(commande),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(response) {
+                if (response.result == "true") {
+                    document.getElementById("newcommandeError").innerHTML = ""
+                    addcommandeHTML(response)
+                } else {
+                    document.getElementById("newcommandeError").innerHTML = "There is already a commande with that id"
+                }
+            }
+        })
+        event.preventDefault();
+        document.getElementById("newcommandeForm").reset()
+    }
+
+    function addcommandeHTML(response) {
+        var div = document.createElement("div")
+        div.className = "container"
+        div.id = response.ID.toString() + "commandeContainer"
+
+        var ID = document.createElement("span")
+        ID.id = response.ID + "commandeSpan"
+        ID.innerHTML = response.id
+        div.appendChild(ID)
+
+        var form = document.createElement("form")
+        form.id = "commandeUpdateForm"
+        form.book = response.id
+        var IDInput = document.createElement("input")
+        IDInput.id = response.commandeID.toString() + "ID"
+        IDInput.value = response.ID
+        form.appendChild(IDInput)
+
+        var bookInput = document.createElement("input")
+        bookInput.id = response.commandeID.toString() + "book"
+        bookInput.value = response.book
+        form.appendChild(bookInput)
+        var update = document.createElement("button")
+        update.id = "update"
+        update.value = response.commandeID.toString()
+        update.className = "btn btn-primary btn-mine"
+        update.innerHTML = "Update"
+        update.type = "submit"
+        form.append(update)
+
+        var deleteButton = document.createElement("button")
+        deleteButton.value = response.commandeID
+        deleteButton.className = "btn btn-primary btn-mine"
+        deleteButton.id = "delete"
+        deleteButton.innerHTML = "Delete"
+        form.appendChild(deleteButton)
+        var errorDiv = document.createElement("div")
+        errorDiv.id = response.commandeID.toString() + "error"
+        form.appendChild(errorDiv)
+        div.appendChild(form)
+        $("#commandes").append(div)
+    }
+</script>
+{% endblock %}

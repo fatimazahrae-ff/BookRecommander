@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Recommender System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-4.4.1-dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+
+</head>
+
+<body>
+    <style>
+        div {
+            background-image: url('/static/img/tt.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+
+
+    <div id="total-container" class="container-fluid">
+        <nav class="navbar navbar-expand-md navbar-light  " style="background-color: #e2a8d5;">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a href="{{ '/' }}" class="navbar-item">
+                                Home
+                            </a>
+                </li>
+                {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                    <a href="{{ '/login' }}" class="navbar-item">
+                                    Login
+                                </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ '/signup' }}" class="navbar-item">
+                                    Sign Up
+                                </a>
+                </li>
+                {% else %} {% if current_user.username == "admin" %}
+                <li class="nav-item"></li>
+                <a href="/books" class="navbar-item">
+                                        Books
+                                    </a>
+                </li>
+                <li class="nav-item"></li>
+                <a href="/users" class="navbar-item">
+                                        Users
+                                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item"></li>
+                <a href="/profile" class="navbar-item">
+                                        Profile
+                                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item"></li>
+                <a href="/logout" class="navbar-item">
+                                    Logout
+                                </a>
+                </li>
+                {% endif %}
+
+                <li class="nav-item"></li>
+                <a href="/users" class="navbar-item">
+                                        Users
+                                    </a>
+                </li>
+                <li class="nav-item"></li>
+                <a href="/books" class="navbar-item">
+                                        Books
+                                    </a>
+                </li>
+                <li class="nav-item"></li>
+                <a href="/commande" class="navbar-item">
+                                        Order
+                                    </a>
+                </li>
+
+            </ul>
+        </nav>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>
